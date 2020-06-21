@@ -63,6 +63,22 @@ public class Split {
 		this.sumLabel = sumLabel;
 		avgLabel = sumLabel/samples.length;
 	}
+
+	public Split(int[] samples, FeatureHistogram hist) {
+		this.samples = samples;
+		this.hist = hist;
+	}
+
+	public Split(int[] samples, double deviance, double sumLabel, double sqSumLabel) {
+		this.deviance = deviance;
+		this.sumLabel = sumLabel;
+		this.sqSumLabel = sqSumLabel;
+		avgLabel = sumLabel / sortedSampleIDs[0].length;
+	}
+
+	Split(int[] new_sampleids, double prediction) {
+		avgLabel = prediction;
+	}
 	
 	public void set(int featureID, float threshold, double deviance)
 	{
@@ -199,5 +215,21 @@ public class Split {
 	public boolean isRoot()
 	{
 		return isRoot;
+	}
+
+	public float getThreshold() {
+		return threshold;
+	}
+
+	public void setThreshold(float threshold) {
+		this.threshold = threshold;
+	}
+
+	public int getFeatureID() {
+		return featureID;
+	}
+
+	public void setFeatureID(int featureID) {
+		this.featureID = featureID;
 	}
 }

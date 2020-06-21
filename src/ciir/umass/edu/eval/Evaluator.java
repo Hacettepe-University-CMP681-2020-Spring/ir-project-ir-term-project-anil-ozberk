@@ -17,6 +17,7 @@ import ciir.umass.edu.learning.neuralnet.ListNet;
 import ciir.umass.edu.learning.neuralnet.Neuron;
 import ciir.umass.edu.learning.neuralnet.RankNet;
 import ciir.umass.edu.learning.tree.LambdaMART;
+import ciir.umass.edu.learning.tree.ObliviousLambdaMART;
 import ciir.umass.edu.learning.tree.RFRanker;
 import ciir.umass.edu.metric.ERRScorer;
 import ciir.umass.edu.metric.METRIC;
@@ -46,12 +47,13 @@ public class Evaluator {
 		
 		String[] rType = new String[] { "MART", "RankNet", "RankBoost", "AdaRank", "Coordinate Ascent",
                                                 "LambdaRank", "LambdaMART", "ListNet", "Random Forests", 
-                                                "Linear Regression" };
+                                                "Linear Regression", "Oblivious LambdaMART" };
 		RANKER_TYPE[] rType2 = new RANKER_TYPE[] { RANKER_TYPE.MART, RANKER_TYPE.RANKNET, 
                                                            RANKER_TYPE.RANKBOOST, RANKER_TYPE.ADARANK, 
                                                            RANKER_TYPE.COOR_ASCENT, RANKER_TYPE.LAMBDARANK, 
                                                            RANKER_TYPE.LAMBDAMART, RANKER_TYPE.LISTNET, 
-                                                           RANKER_TYPE.RANDOM_FOREST, RANKER_TYPE.LINEAR_REGRESSION };
+                                                           RANKER_TYPE.RANDOM_FOREST, RANKER_TYPE.LINEAR_REGRESSION,
+														     RANKER_TYPE.OBVLAMBDAMART};
 		
 		String trainFile = "";
 		String featureDescriptionFile = "";
@@ -93,6 +95,7 @@ public class Evaluator {
 			System.out.println("\t\t\t\t7: ListNet");
 			System.out.println("\t\t\t\t8: Random Forests");
 			System.out.println("\t\t\t\t9: Linear regression (L2 regularization)");
+			System.out.println("\t\t\t\t10: OBVLambdaMART");
 			System.out.println("\t[ -feature <file> ]\tFeature description file: list features to be considered by the learner, each on a separate line");
 			System.out.println("\t\t\t\tIf not specified, all features will be used.");
 			//System.out.println("\t[ -metric2t <metric> ]\tMetric to optimize on the training data. Supported: MAP, NDCG@k, DCG@k, P@k, RR@k, BEST@k, ERR@k (default=" + trainMetric + ")");
@@ -165,7 +168,7 @@ public class Evaluator {
 			System.out.println("\t[ -reg <slack> ]\tRegularization parameter (default=no-regularization)");
 
 			System.out.println("");
-			System.out.println("    [-] {MART, LambdaMART}-specific parameters");
+			System.out.println("    [-] {MART, LambdaMART, OBVLambdaMART}-specific parameters");
 			System.out.println("\t[ -tree <t> ]\t\tNumber of trees (default=" + LambdaMART.nTrees + ")");
 			System.out.println("\t[ -leaf <l> ]\t\tNumber of leaves for each tree (default=" + LambdaMART.nTreeLeaves + ")");
 			System.out.println("\t[ -shrinkage <factor> ]\tShrinkage, or learning rate (default=" + LambdaMART.learningRate + ")");
@@ -340,32 +343,40 @@ public class Evaluator {
 				CoorAscent.tolerance = Double.parseDouble(args[i]);
 			}
 			
-			//MART / LambdaMART / Random forest
+			//MART / LambdaMART / Random forest / Oblivious LambdaMART
 			else if (args[i].equalsIgnoreCase ("-tree"))
 			{
 				LambdaMART.nTrees = Integer.parseInt(args[++i]);
 				RFRanker.nTrees = Integer.parseInt(args[i]);
+				ObliviousLambdaMART.nTrees = Integer.parseInt(args[++i]);
 			}
 			else if (args[i].equalsIgnoreCase ("-leaf"))
 			{
 				LambdaMART.nTreeLeaves = Integer.parseInt(args[++i]);
 				RFRanker.nTreeLeaves = Integer.parseInt(args[i]);
+				ObliviousLambdaMART.nTreeLeaves = Integer.parseInt(args[++i]);
 			}
 			else if (args[i].equalsIgnoreCase ("-shrinkage"))
 			{
 				LambdaMART.learningRate = Float.parseFloat(args[++i]);
 				RFRanker.learningRate = Float.parseFloat(args[i]);
+				ObliviousLambdaMART.learningRate = Float.parseFloat(args[++i]);
 			}
 			else if (args[i].equalsIgnoreCase ("-mls"))
 			{
 				LambdaMART.minLeafSupport = Integer.parseInt(args[++i]);
 				RFRanker.minLeafSupport = LambdaMART.minLeafSupport;
+				ObliviousLambdaMART.minLeafSupport = Integer.parseInt(args[++i]);
 			}
-			else if (args[i].equalsIgnoreCase ("-estop"))
+			else if (args[i].equalsIgnoreCase ("-estop")){
 				LambdaMART.nRoundToStopEarly = Integer.parseInt(args[++i]);
+				ObliviousLambdaMART.nRoundToStopEarly = Integer.parseInt(args[++i]);
+			}
 			//for debugging
-			else if (args[i].equalsIgnoreCase ("-gcc"))
+			else if (args[i].equalsIgnoreCase("-gcc")) {
 				LambdaMART.gcCycle = Integer.parseInt(args[++i]);
+				ObliviousLambdaMART.gcCycle = Integer.parseInt(args[++i]);
+			}
 
 			//Random forest
 			else if (args[i].equalsIgnoreCase ("-bag"))
@@ -381,7 +392,7 @@ public class Evaluator {
 					RFRanker.rType = rType2[rt];
 				else
 				{
-					throw RankLibError.create(rType[rt] + " cannot be bagged. Random Forests only supports MART/LambdaMART.");
+					throw RankLibError.create(rType[rt] + " cannot be bagged. Random Forests only supports MART/LambdaMART/Oblivious LambdaMART.");
 				}
 			}
 			

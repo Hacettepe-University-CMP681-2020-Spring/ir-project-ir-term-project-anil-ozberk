@@ -16,6 +16,7 @@ import ciir.umass.edu.learning.neuralnet.ListNet;
 import ciir.umass.edu.learning.neuralnet.RankNet;
 import ciir.umass.edu.learning.tree.LambdaMART;
 import ciir.umass.edu.learning.tree.MART;
+import ciir.umass.edu.learning.tree.ObliviousLambdaMART;
 import ciir.umass.edu.learning.tree.RFRanker;
 import ciir.umass.edu.metric.MetricScorer;
 import ciir.umass.edu.utilities.FileUtils;
@@ -33,7 +34,7 @@ import java.util.List;
  */
 public class RankerFactory {
 
-	protected Ranker[] rFactory = new Ranker[]{new MART(), new RankBoost(), new RankNet(), new AdaRank(), new CoorAscent(), new LambdaRank(), new LambdaMART(), new ListNet(), new RFRanker(), new LinearRegRank()};
+	protected Ranker[] rFactory = new Ranker[]{new MART(), new RankBoost(), new RankNet(), new AdaRank(), new CoorAscent(), new LambdaRank(), new LambdaMART(), new ListNet(), new RFRanker(), new LinearRegRank(), new ObliviousLambdaMART()};
 	protected static HashMap<String, RANKER_TYPE> map = new HashMap<String, RANKER_TYPE>();
 	
 	public RankerFactory()

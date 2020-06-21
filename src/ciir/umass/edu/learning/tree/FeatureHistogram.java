@@ -371,6 +371,59 @@ public class FeatureHistogram {
 		return true;
 	}
 
+	public FeatureHistogram(FeatureHistogram parent, int[] sampleids, int nsampleids, double[] labels) {
+		this.thresholds = parent.thresholds;
+		this.features = parent.features;
+
+		sum = parent.sum;
+		count = parent.count;
+
+		for (int f = 0; f < features.length; ++f) {
+			for (int i = 0; i < nsampleids; ++i) {
+				int s = sampleids[i];
+				int t = parent.sampleToThresholdMap[f][s];
+				sum[f][t] += labels[s];
+				count[f][t]++;
+			}
+			for (int t = 1; t < thresholds[f].length; ++t) {
+				sum[f][t] += sum[f][t - 1];
+				count[f][t] += count[f][t - 1];
+			}
+		}
+
+		sqSumResponse = 0.0;
+		for (int i = 0; i < nsampleids; ++i) {
+			int s = sampleids[i];
+			sqSumResponse += labels[s] * labels[s];
+		}
+	}
+
+	public FeatureHistogram(FeatureHistogram parent, FeatureHistogram left){
+		features = parent.features;
+		thresholds = parent.thresholds;
+		sum = parent.sum;
+		count = parent.count;
+		for (int f = 0; f < features.length; ++f) {
+			for (int t = 0; t < thresholds[f].length; ++t) {
+				sum[f][t] = parent.sum[f][t] - left.sum[f][t];
+				count[f][t] = parent.count[f][t] - left.count[f][t];
+			}
+		}
+		sqSumResponse = parent.sqSumResponse - left.sqSumResponse;
+	}
+
+
+	public void transformIntoRightChild(FeatureHistogram left) {
+		sqSumResponse = sqSumResponse - left.sqSumResponse;
+		for (int f = 0; f < features.length; ++f) {
+			int nthresholds = thresholds[f].length;
+			for (int t = 0; t < nthresholds; ++t) {
+				sum[f][t] -= left.sum[f][t];
+				count[f][t] -= left.count[f][t];
+			}
+		}
+	}
+
 	class Worker extends WorkerThread {
 		FeatureHistogram fh = null;
 		int type = -1;
