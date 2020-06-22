@@ -7,7 +7,7 @@ Version:	2.13
 RankLib is a library for comparing different ranking algorithms. In
 the current version: 
 - Algorithms: MART, RankNet, RankBoost, AdaRank, Coordinate Ascent,
-LambdaMART, ListNet and Random Forests. 
+LambdaMART, ListNet, Random Forests and Oblivious LambdaMART.
 - Training data: it allow users to: 
    + Specify train/test data separately
    + Automatically does train/test split from a single input file
@@ -37,6 +37,7 @@ Params:
 				6: LambdaMART
 				7: ListNet
 				8: Random Forests
+				8: Oblivious LambdaMART
 	[ -feature <file> ]	Feature description file: list features to be considered by the learner, each on a separate line
 				If not specified, all features will be used.
 	[ -metric2t <metric> ]	Metric to optimize on the training data. Supported: MAP, NDCG@k, DCG@k, P@k, RR@k, ERR@k (default=ERR@10)
@@ -76,7 +77,7 @@ Params:
 	[ -tolerance <t> ]	Performance tolerance between two solutions (default=0.0010)
 	[ -reg <slack> ]	Regularization parameter (default=no-regularization)
 
-    [-] {MART, LambdaMART}-specific parameters
+    [-] {MART, LambdaMART, Oblivious LambdaMART}-specific parameters
 	[ -tree <t> ]		Number of trees (default=1000)
 	[ -leaf <l> ]		Number of leaves for each tree (default=10)
 	[ -shrinkage <factor> ]	Shrinkage, or learning rate (default=0.1)

@@ -76,8 +76,10 @@ public class ObliviousRegressionTree extends RegressionTree {
                 }
 
                 int lastThresholdId = split.hist.count[bestFeatureIdx].length - 1;
-                int leftCount = split.hist.count[bestFeatureIdx][bestThresholdId];
-                int rightCount = split.hist.count[bestFeatureIdx][lastThresholdId] - leftCount;
+                //int leftCount = split.hist.count[bestFeatureIdx][bestThresholdId]; //todo: leftCount and rightCount should be corrected
+                int leftCount = trainingSamples.length;
+                //int rightCount = split.hist.count[bestFeatureIdx][lastThresholdId] - leftCount;
+                int rightCount = trainingSamples.length;
                 float bestThreshold = split.hist.thresholds[bestFeatureIdx][bestThresholdId];
 
                 int[] leftSamples = new int[leftCount];
