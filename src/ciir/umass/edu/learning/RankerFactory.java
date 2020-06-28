@@ -49,7 +49,8 @@ public class RankerFactory {
 		map.put(createRanker(RANKER_TYPE.LISTNET).name().toUpperCase(), RANKER_TYPE.LISTNET);
 		map.put(createRanker(RANKER_TYPE.RANDOM_FOREST).name().toUpperCase(), RANKER_TYPE.RANDOM_FOREST);
 		map.put(createRanker(RANKER_TYPE.LINEAR_REGRESSION).name().toUpperCase(), RANKER_TYPE.LINEAR_REGRESSION);
-	}	
+		map.put(createRanker(RANKER_TYPE.OBVLAMBDAMART).name().toUpperCase(), RANKER_TYPE.OBVLAMBDAMART);
+	}
 	public Ranker createRanker(RANKER_TYPE type)
 	{
 		return rFactory[type.ordinal() - RANKER_TYPE.MART.ordinal()].createNew();
@@ -108,7 +109,7 @@ public class RankerFactory {
       System.out.println("Model:\t\t" + content);
       r = createRanker(map.get(content.toUpperCase()));
       r.loadFromString(fullText);
-			return r;
+				return r;
     }
     catch(Exception ex)
     {

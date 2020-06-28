@@ -194,6 +194,16 @@ public class EvaluatorTest {
     }
   }
   @Test
+  public void testOBVLambdaMART() throws IOException {
+    try (TmpFile dataFile = new TmpFile();
+         TmpFile modelFile = new TmpFile();
+         TmpFile rankFile = new TmpFile()
+    ) {
+      writeRandomData(dataFile);
+      testRanker(dataFile, modelFile, rankFile, 10, "map");
+    }
+  }
+  @Test
   public void testListNet() throws IOException {
     try (TmpFile dataFile = new TmpFile();
          TmpFile modelFile = new TmpFile();

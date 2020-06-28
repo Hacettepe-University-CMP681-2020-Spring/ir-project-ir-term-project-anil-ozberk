@@ -37,7 +37,7 @@ Params:
 				6: LambdaMART
 				7: ListNet
 				8: Random Forests
-				8: Oblivious LambdaMART
+				9: Oblivious LambdaMART
 	[ -feature <file> ]	Feature description file: list features to be considered by the learner, each on a separate line
 				If not specified, all features will be used.
 	[ -metric2t <metric> ]	Metric to optimize on the training data. Supported: MAP, NDCG@k, DCG@k, P@k, RR@k, ERR@k (default=ERR@10)

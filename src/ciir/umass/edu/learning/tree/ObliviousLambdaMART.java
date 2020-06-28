@@ -123,16 +123,6 @@ public class ObliviousLambdaMART extends LambdaMART {
     }
 
     @Override
-    public String toString() {
-        return ensemble.toString();
-    }
-
-    @Override
-    public void loadFromString(String fullText) {
-
-    }
-
-    @Override
     public String name() {
         return "Oblivious LambdaMART";
     }
