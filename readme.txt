@@ -1,4 +1,5 @@
-Date:		December, 2019.
+Note: Second commit is about Oblivious LambdaMART. First and seconf commit could be compared different master branch and Oblivious LambdaMART.
+Date:		June, 20202.
 Version:	2.13
 ======================================
 ======================================
