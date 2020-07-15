@@ -65,8 +65,12 @@ public class Split {
 	}
 
 	public Split(int[] samples, FeatureHistogram hist) {
+		int nSampleIds = samples.length;
 		this.samples = samples;
 		this.hist = hist;
+		double sumlabel = hist.sum[0][hist.thresholds[0].length - 1];
+		avgLabel = nSampleIds != 0 ? sumlabel / (double) nSampleIds : 0.0;
+		deviance = hist.sqSumResponse - Math.pow(sumlabel, 2) / nSampleIds;
 	}
 
 	public Split(int[] samples, double deviance, double sumLabel, double sqSumLabel) {
@@ -76,7 +80,8 @@ public class Split {
 		avgLabel = sumLabel / sortedSampleIDs[0].length;
 	}
 
-	Split(int[] new_sampleids, double prediction) {
+	Split(int[] samples, double prediction) {
+		this.samples = samples;
 		avgLabel = prediction;
 	}
 	

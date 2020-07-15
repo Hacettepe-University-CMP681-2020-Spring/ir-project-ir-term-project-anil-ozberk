@@ -1,9 +1,7 @@
 package ciir.umass.edu.learning.tree;
 
 import ciir.umass.edu.learning.DataPoint;
-import ciir.umass.edu.learning.RankList;
 import ciir.umass.edu.learning.Ranker;
-import ciir.umass.edu.metric.MetricScorer;
 import ciir.umass.edu.utilities.SimpleMath;
 
 import java.util.List;
@@ -33,7 +31,11 @@ public class ObliviousLambdaMART extends LambdaMART {
             computePseudoResponses();
 
             //update the histogram with these training labels (the feature histogram will be used to find the best tree split)
-            hist.update(pseudoResponses);
+            int[] sampleids = new int[martSamples.length];
+            for (int a = 0; a < sampleids.length; a++) {
+                sampleids[a] = a;
+            }
+            hist.update(pseudoResponses, sampleids);
 
             //Fit a regression tree
             ObliviousRegressionTree rt = new ObliviousRegressionTree(nTreeLeaves, martSamples, pseudoResponses, hist, minLeafSupport);

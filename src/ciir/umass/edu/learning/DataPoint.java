@@ -203,7 +203,11 @@ public abstract class DataPoint {
 		output += " " + description;
 		return output;
 	}
-	
+
+	public float[] getfVals() {
+		return fVals;
+	}
+
 	public static int getFeatureCount()
 	{
 		return featureCount;

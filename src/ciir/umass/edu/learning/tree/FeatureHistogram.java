@@ -120,6 +120,39 @@ public class FeatureHistogram {
 		else
 			p.execute(new Worker(this, labels), features.length);
 	}
+
+	public void update(double[] labels, int[] sampleids) {
+		int nfeatures = this.features.length;
+
+		for (int f = 0; f < nfeatures; ++f) {
+			for (int t = 0; t < thresholds[f].length; ++t) {
+				sum[f][t] = 0.0;
+				count[f][t] = 0;
+			}
+		}
+
+		for (int f = 0; f < nfeatures; ++f) {
+			for (int j = 0; j < sampleids.length; ++j) {
+				int s = sampleids[j];
+				int t = sampleToThresholdMap[f][s];
+				sum[f][t] += labels[s];
+				count[f][t]++;
+				//count change, so need to re-compute
+			}
+
+			for (int t = 1; t < thresholds[f].length; ++t) {
+				sum[f][t] += sum[f][t - 1];
+				count[f][t] += count[f][t - 1];
+			}
+		}
+
+		sqSumResponse = 0.0;
+		for (int k = 0; k < sampleids.length; ++k) {
+			int s = sampleids[k];
+			sqSumResponse += labels[s] * labels[s];
+		}
+	}
+
 	protected void update(double[] labels, int start, int end)
 	{
 		for(int f=start;f<=end;f++)
@@ -374,9 +407,14 @@ public class FeatureHistogram {
 	public FeatureHistogram(FeatureHistogram parent, int[] sampleids, int nsampleids, double[] labels) {
 		this.thresholds = parent.thresholds;
 		this.features = parent.features;
+		this.sampleToThresholdMap = parent.sampleToThresholdMap;
 
-		sum = parent.sum;
-		count = parent.count;
+		sum = new double[features.length][];
+		count = new int[features.length][];
+		for(int i=0;i<features.length;i++){
+			sum[i]=new double[parent.sum[i].length];
+			count[i]=new int[parent.count[i].length];
+		}
 
 		for (int f = 0; f < features.length; ++f) {
 			for (int i = 0; i < nsampleids; ++i) {
@@ -401,8 +439,13 @@ public class FeatureHistogram {
 	public FeatureHistogram(FeatureHistogram parent, FeatureHistogram left){
 		features = parent.features;
 		thresholds = parent.thresholds;
-		sum = parent.sum;
-		count = parent.count;
+		sampleToThresholdMap = parent.sampleToThresholdMap;
+		sum = new double[features.length][];
+		count = new int[features.length][];
+		for(int i=0;i<features.length;i++){
+			sum[i]=new double[parent.sum[i].length];
+			count[i]=new int[parent.count[i].length];
+		}
 		for (int f = 0; f < features.length; ++f) {
 			for (int t = 0; t < thresholds[f].length; ++t) {
 				sum[f][t] = parent.sum[f][t] - left.sum[f][t];

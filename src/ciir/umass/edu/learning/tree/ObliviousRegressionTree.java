@@ -8,8 +8,7 @@ import java.util.List;
 public class ObliviousRegressionTree extends RegressionTree {
 
     int treedepth = 10;
-    int nsampleids = super.trainingSamples.length;
-    int[] sampleids = new int[nsampleids];
+    int[] sampleids = new int[super.trainingSamples.length];
     float invalid = Float.MAX_VALUE;
 
     public ObliviousRegressionTree(Split root) {
@@ -26,9 +25,13 @@ public class ObliviousRegressionTree extends RegressionTree {
     @Override
     public void fit() {
         //change according to oblivious tree
+        for (int a = 0; a < trainingSamples.length; a++) {
+            sampleids[a] = a;
+        }
+
         int nFeatureSamples = hist.features.length;
         Split[] nodeArray = new Split[(1 << (treedepth + 1))];
-        nodeArray[0] = root = new Split(sampleids, hist, Float.MAX_VALUE, 0);
+        nodeArray[0] = root = new Split(sampleids, hist);
         List<float[]> sumScores = new ArrayList<>();
 
         for (int i = 0; i < nFeatureSamples; ++i) {
@@ -76,10 +79,8 @@ public class ObliviousRegressionTree extends RegressionTree {
                 }
 
                 int lastThresholdId = split.hist.count[bestFeatureIdx].length - 1;
-                //int leftCount = split.hist.count[bestFeatureIdx][bestThresholdId]; //todo: leftCount and rightCount should be corrected
-                int leftCount = trainingSamples.length;
-                //int rightCount = split.hist.count[bestFeatureIdx][lastThresholdId] - leftCount;
-                int rightCount = trainingSamples.length;
+                int leftCount = split.hist.count[bestFeatureIdx][bestThresholdId];
+                int rightCount = split.hist.count[bestFeatureIdx][lastThresholdId] - leftCount;
                 float bestThreshold = split.hist.thresholds[bestFeatureIdx][bestThresholdId];
 
                 int[] leftSamples = new int[leftCount];
@@ -89,11 +90,11 @@ public class ObliviousRegressionTree extends RegressionTree {
 
                 float[] features = new float[trainingSamples.length];
                 for (int j = 0; j < trainingSamples.length; j++) {
-                    features[j] = nodeArray[0].hist.sampleToThresholdMap[bestFeatureIdx][j];
+                    features[j] = trainingSamples[j].getfVals()[bestFeatureIdx+1];
                 }
 
                 for (int j = 0, nsampleids = sampleIds.length; j < nsampleids; ++j) {
-                    int k = sampleIds[j];
+                    int k = split.getSamples()[j];
                     if (features[k] <= bestThreshold) {
                         leftSamples[lsize++] = k;
                     } else {
@@ -104,7 +105,7 @@ public class ObliviousRegressionTree extends RegressionTree {
                 FeatureHistogram rightHist;
                 if (depth != treedepth - 1) {
                     leftHist = new FeatureHistogram(split.hist, leftSamples, lsize, trainingLabels);
-                    if (split == root) {
+                    if (split.equals(root)) {
                         rightHist = new FeatureHistogram(split.hist, leftHist);
                     } else {
                         split.hist.transformIntoRightChild(leftHist);
