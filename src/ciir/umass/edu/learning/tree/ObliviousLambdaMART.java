@@ -7,6 +7,7 @@ import ciir.umass.edu.utilities.SimpleMath;
 import java.util.List;
 
 public class ObliviousLambdaMART extends LambdaMART {
+    static { nTreeLeaves = 3; }
 
     public ObliviousLambdaMART() {
     }

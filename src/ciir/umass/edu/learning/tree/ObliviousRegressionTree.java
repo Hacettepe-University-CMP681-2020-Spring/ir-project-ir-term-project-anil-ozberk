@@ -7,7 +7,6 @@ import java.util.List;
 
 public class ObliviousRegressionTree extends RegressionTree {
 
-    int treedepth = 10;
     int[] sampleids = new int[super.trainingSamples.length];
     float invalid = Float.MAX_VALUE;
 
@@ -30,7 +29,7 @@ public class ObliviousRegressionTree extends RegressionTree {
         }
 
         int nFeatureSamples = hist.features.length;
-        Split[] nodeArray = new Split[(1 << (treedepth + 1))];
+        Split[] nodeArray = new Split[(1 << (nodes + 1))];
         nodeArray[0] = root = new Split(sampleids, hist);
         List<float[]> sumScores = new ArrayList<>();
 
@@ -38,7 +37,7 @@ public class ObliviousRegressionTree extends RegressionTree {
             sumScores.add(new float[hist.count[i].length]);
         }
 
-        for (int depth = 0; depth < treedepth; ++depth) {
+        for (int depth = 0; depth < nodes; ++depth) {
             int lbegin = (1 << depth) - 1;
             int lend = (1 << depth + 1) - 1;
             for (int i = 0; i < nFeatureSamples; ++i) {
@@ -103,7 +102,7 @@ public class ObliviousRegressionTree extends RegressionTree {
                 }
                 FeatureHistogram leftHist;
                 FeatureHistogram rightHist;
-                if (depth != treedepth - 1) {
+                if (depth != nodes - 1) {
                     leftHist = new FeatureHistogram(split.hist, leftSamples, lsize, trainingLabels);
                     if (split.equals(root)) {
                         rightHist = new FeatureHistogram(split.hist, leftHist);
