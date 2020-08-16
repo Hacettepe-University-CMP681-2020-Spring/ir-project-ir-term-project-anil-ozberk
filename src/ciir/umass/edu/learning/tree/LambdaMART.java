@@ -36,7 +36,7 @@ public class LambdaMART extends Ranker {
 	public static int nTrees = 1000;//the number of trees
 	public static float learningRate = 0.1F;//or shrinkage
 	public static int nThreshold = 256;
-	public static int nRoundToStopEarly = 100;//If no performance gain on the *VALIDATION* data is observed in #rounds, stop the training process right away. 
+	public static int nRoundToStopEarly = 100;//If no performance gain on the *VALIDATION* data is observed in #rounds, stop the training process right away.
 	public static int nTreeLeaves = 10;
 	public static int minLeafSupport = 1;
 	
