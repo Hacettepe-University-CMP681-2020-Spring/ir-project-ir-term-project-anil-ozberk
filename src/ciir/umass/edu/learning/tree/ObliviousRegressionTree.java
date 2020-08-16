@@ -3,12 +3,12 @@ package ciir.umass.edu.learning.tree;
 import ciir.umass.edu.learning.DataPoint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ObliviousRegressionTree extends RegressionTree {
 
-    int treedepth = 10;
-    int[] sampleids = new int[super.trainingSamples.length];
+    int treedepth = 3;
     float invalid = Float.MAX_VALUE;
 
     public ObliviousRegressionTree(Split root) {
@@ -25,14 +25,16 @@ public class ObliviousRegressionTree extends RegressionTree {
     @Override
     public void fit() {
         //change according to oblivious tree
-        for (int a = 0; a < trainingSamples.length; a++) {
-            sampleids[a] = a;
+        int[] sampleids = new int[super.trainingSamples.length];
+        for (int i = 0; i < trainingSamples.length; i++) {
+            sampleids[i] = i;
         }
 
         int nFeatureSamples = hist.features.length;
         Split[] nodeArray = new Split[(1 << (treedepth + 1))];
         nodeArray[0] = root = new Split(sampleids, hist);
         List<float[]> sumScores = new ArrayList<>();
+        float[] features = new float[trainingSamples.length];
 
         for (int i = 0; i < nFeatureSamples; ++i) {
             sumScores.add(new float[hist.count[i].length]);
@@ -88,7 +90,6 @@ public class ObliviousRegressionTree extends RegressionTree {
                 int[] rightSamples = new int[rightCount];
                 int rsize = 0;
 
-                float[] features = new float[trainingSamples.length];
                 for (int j = 0; j < trainingSamples.length; j++) {
                     features[j] = trainingSamples[j].getfVals()[bestFeatureIdx+1];
                 }
@@ -127,6 +128,7 @@ public class ObliviousRegressionTree extends RegressionTree {
                 }
                 split.setFeatureID(bestFeatureIdx + 1);
                 split.setThreshold(bestThreshold);
+                Arrays.fill(features, 0.0f);
             }
         }
         leaves = root.leaves();
